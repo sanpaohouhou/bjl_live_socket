@@ -1,6 +1,6 @@
 
 //引入http模块
-var socketio = require('socket.io'),
+var socketio = require('socket.io').listen(app,{resource: '/live/socket.io'}),
 	fs 	= require('fs'),
 	https     = require('http'),
 	domain   = require('domain'),

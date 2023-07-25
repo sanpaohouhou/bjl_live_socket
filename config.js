@@ -5,6 +5,6 @@ module.exports = {
 	'REDISDB' 	: '7',
 	'TOKEN'		: '1234567',
 	'sign_key'	: '76576076c1f5f657b634e966c8836a06',
-	'socket_port': '14427',
-	'WEBADDRESS': 'http://bjl.dn28.link/api/'
+	'socket_port': '3000',
+	'WEBADDRESS': 'http://localhost:8080/api/'
 }

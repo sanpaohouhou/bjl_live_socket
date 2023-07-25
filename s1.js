@@ -1,6 +1,6 @@
 
 //引入http模块
-var socketio = require('socket.io').listen(app,{resource: '/live/socket.io'}),
+var socketio = require('socket.io'),
 	fs 	= require('fs'),
 	https     = require('http'),
 	domain   = require('domain'),
@@ -40,8 +40,8 @@ var server = https.createServer(function(req, res) {
 }).listen(config['socket_port'], function() {
 	////console.log('服务开启19965');
 });
-
 var io = socketio.listen(server,{
+    resource: '/live/socket.io',
 	pingTimeout: 60000,
   	pingInterval: 25000
 });

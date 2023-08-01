@@ -32,6 +32,7 @@ var clientRedis  = redis.createClient(config['REDISPORT'],config['REDISHOST'],{d
 // clientRedis.auth(config['REDISPASS']);
 //var server = https.createServer(options,function(req, res) {
 var server = https.createServer(function(req, res) {
+
 	res.writeHead(200, {
 		'Content-type': 'text/html;charset=utf-8'
 	});
@@ -61,7 +62,7 @@ io.on('connection', function(socket) {
 
 	//进入房间
 	socket.on('conn', function(data) {
-		
+		console.log("进入房间");
 		if(!data || !data.token){
 				return !1;
 		}
@@ -86,17 +87,17 @@ io.on('connection', function(socket) {
 			old_socket.disconnect()
 		}
 		
-		clientRedis.get(data.token,function(error,res){
+		clientRedis.get("baccarat:LOGIN_TOKEN:"+data.token,function(error,res){
+            console.log("开始获取token");
 			if(error){
 				return;
 			}else if(res==null){
-				//console.log("[获取token失败]"+data.uid);
+				console.log("[获取token失败]"+data.uid);
 			}else{
 				if(res != null){
-					
 					var userInfo = evalJson(res);
-					if(userInfo['id'] == data.uid ){
-						//console.log("[初始化验证成功]--"+data.uid+"---"+data.roomnum+'---'+data.stream);
+					if(res == data.uid ){
+						console.log("[初始化验证成功]--"+data.uid+"---"+data.roomnum+'---'+data.stream);
 						//获取验证token
 						socket.token   = data.token; 
 						socket.roomnum = data.roomnum;
@@ -142,19 +143,20 @@ io.on('connection', function(socket) {
                                                     "_method_":"SendMsg",
                                                     "action":"0",
                                                     "ct":{
-                                                        "id":''+userInfo['id'],
-                                                        "user_nicename":''+userInfo['user_nicename'],
-                                                        "avatar":userInfo['avatar'],
-                                                        "avatar_thumb":userInfo['avatar_thumb'],
-                                                        "level":''+userInfo['level'],
-                                                        "usertype":''+userInfo['usertype'],
-                                                        "vip_type":''+userInfo['vip']['type'],
-                                                        "guard_type":''+userInfo['guard_type'],
-                                                        "liangname":''+userInfo['liang']['name'],
-                                                        "car_id":''+car_id,
-                                                        "car_swf":''+car_swf,
-                                                        "car_swftime":''+car_swftime,
-                                                        "car_words":''+car_words
+                                                        "id":res
+                                                        // "id":''+userInfo['id'],
+                                                        // "user_nicename":''+userInfo['user_nicename'],
+                                                        // "avatar":userInfo['avatar'],
+                                                        // "avatar_thumb":userInfo['avatar_thumb'],
+                                                        // "level":''+userInfo['level'],
+                                                        // "usertype":''+userInfo['usertype'],
+                                                        // "vip_type":''+userInfo['vip']['type'],
+                                                        // "guard_type":''+userInfo['guard_type'],
+                                                        // "liangname":''+userInfo['liang']['name'],
+                                                        // "car_id":''+car_id,
+                                                        // "car_swf":''+car_swf,
+                                                        // "car_swftime":''+car_swftime,
+                                                        // "car_words":''+car_words
                                                     },
                                                     "msgtype":"0"
                                                 }
@@ -164,7 +166,7 @@ io.on('connection', function(socket) {
                                         };
 							process_msg(io,socket.roomnum,JSON.stringify(data_obj));
 							if(socket.stream){
-								clientRedis.zadd('user_'+socket.stream,socket.sign,userInfo['id']);	
+								// clientRedis.zadd('user_'+socket.stream,socket.sign,userInfo['id']);	
 							}
 						}						
 						 
@@ -674,8 +676,9 @@ io.on('connection', function(socket) {
             if(numscount<0){
 				numscount=0;
 			}   */
-          			
+
 			if(socket.roomnum ==null || socket.token==null || socket.uid <=0){
+                console.log("资源释放没有数据");
 				return !1;
 			}
 				
@@ -709,11 +712,13 @@ io.on('connection', function(socket) {
                     }	
 					 
 				});
-				
-				
-				if(socket.roomnum==socket.uid){
+				clientRedis.get("baccarat:LOGIN_TOKEN:"+socket.token,function(error,res){
+                
+				if(res==socket.uid){
+                    console.log("开始关播"+ socket.reusing);
                     if(socket.reusing==0){
-						request.post(config['WEBADDRESS']+"?liveId="+socket.liveId,function(error, response, body){
+                        console.log("嘿嘿嘿")
+						request.post(config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId + "&userId=" + socket.uid,function(error, response, body){
                             var data_obj={
                                         "retmsg":"ok",
                                         "retcode":"000000",
@@ -727,9 +732,9 @@ io.on('connection', function(socket) {
                                         ]
                                     };
                             process_msg(io,socket.roomnum,JSON.stringify(data_obj));
-                            // console.log('关播');
-                            // console.log(FormatNowDate());
-                            // console.log('uid---'+socket.uid);
+                            console.log('关播');
+                            console.log(FormatNowDate());
+                            console.log('uid---'+socket.uid);
                         });
                         endLiveConnect(io,socket.uid);
 					}
@@ -786,10 +791,11 @@ io.on('connection', function(socket) {
 						}
 						
 					});
+                
 					
 				}
 				////console.log(socket.roomnum+"==="+socket.token+"===="+socket.uid+"======"+socket.stream);
-				
+            });
 				socket.leave(socket.roomnum);
 				delete io.sockets.sockets[socket.id];
 				sockets[socket.uid] = null;

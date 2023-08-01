@@ -9,7 +9,7 @@ var socketio = require('socket.io'),
     request  = require('request'),
     md5  = require('md5-node'),
     config   = require('./config.js');
-
+    xToken = null
 var d = domain.create();
 d.on("error", function(err) {
 	console.log(err);
@@ -34,8 +34,15 @@ var clientRedis  = redis.createClient(config['REDISPORT'],config['REDISHOST'],{d
 var server = https.createServer(function(req, res) {
 
 	res.writeHead(200, {
-		'Content-type': 'text/html;charset=utf-8'
+		'Content-type': 'text/html;charset=utf-8',
 	});
+    console.log(123,xToken)
+    if(xToken){
+ 
+        res.writeHead(200, {
+            'X-Token': xToken,
+        });
+    }
    //res.write("人数: " + numscount );
 	res.end();
 }).listen(config['socket_port'], function() {
@@ -66,7 +73,7 @@ io.on('connection', function(socket) {
 		if(!data || !data.token){
 				return !1;
 		}
-		
+		xToken = data.token
 		userid=data.uid;
 		old_socket = sockets[userid];
 		if (old_socket && old_socket != socket) {
@@ -353,7 +360,7 @@ io.on('connection', function(socket) {
 								var data_str=JSON.stringify(dataObj);
 								process_msg(io,socket.roomnum,data_str);
 			    				clientRedis.del(barragetoken);
-			    			}	
+                            }
 			    		});
 			    		break;
 			    	}
@@ -676,7 +683,7 @@ io.on('connection', function(socket) {
             if(numscount<0){
 				numscount=0;
 			}   */
-
+            
 			if(socket.roomnum ==null || socket.token==null || socket.uid <=0){
                 console.log("资源释放没有数据");
 				return !1;
@@ -718,7 +725,14 @@ io.on('connection', function(socket) {
                     console.log("开始关播"+ socket.reusing);
                     if(socket.reusing==0){
                         console.log("嘿嘿嘿")
-						request.post(config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId + "&userId=" + socket.uid,function(error, response, body){
+                        let options = {
+                            url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
+                            headers:{
+                                'X-Token':xToken
+                            }
+                        }
+                        console.log(options);
+						request.post(options,function(error, response, body){
                             var data_obj={
                                         "retmsg":"ok",
                                         "retcode":"000000",

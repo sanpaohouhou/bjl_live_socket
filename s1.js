@@ -62,7 +62,7 @@ var io = socketio.listen(server,{
 //}, 1000*30); 
 
 io.on('connection', function(socket) {
-	console.log('连接成功');
+	console.log('连接成功:+++++++++' + socket);
 	//numscount++;
 							
 	var interval;

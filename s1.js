@@ -38,10 +38,10 @@ var server = https.createServer(function(req, res) {
    //res.write("人数: " + numscount );
 	res.end();
 }).listen(config['socket_port'], function() {
-	////console.log('服务开启19965');
+	console.log(config['socket_port']);
 });
 var io = socketio.listen(server,{
-    resource: '/live/socket.io',
+    path: '/live/socket.io',
 	pingTimeout: 60000,
   	pingInterval: 25000
 });
@@ -54,7 +54,7 @@ var io = socketio.listen(server,{
 //}, 1000*30); 
 
 io.on('connection', function(socket) {
-	//console.log('连接成功');
+	console.log('连接成功');
 	//numscount++;
 							
 	var interval;
@@ -107,6 +107,7 @@ io.on('connection', function(socket) {
 						socket.sign = Number(userInfo['sign']);
 						socket.usertype   = parseInt(userInfo['usertype']);
 						socket.uid     = data.uid;
+                        socket.liveId = data.liveId
 						socket.reusing = 0;
 						
 						socket.join(data.roomnum);
@@ -711,9 +712,8 @@ io.on('connection', function(socket) {
 				
 				
 				if(socket.roomnum==socket.uid){
-					/* 主播 */ 
-					if(socket.reusing==0){
-						request(config['WEBADDRESS']+"?service=Live.stopRoom&uid="+socket.uid + "&token=" + socket.token+ "&type=1&stream=" + socket.stream,function(error, response, body){
+                    if(socket.reusing==0){
+						request.post(config['WEBADDRESS']+"?liveId="+socket.liveId,function(error, response, body){
                             var data_obj={
                                         "retmsg":"ok",
                                         "retcode":"000000",
@@ -733,6 +733,28 @@ io.on('connection', function(socket) {
                         });
                         endLiveConnect(io,socket.uid);
 					}
+					/* 主播 */ 
+					// if(socket.reusing==0){
+						// request(config['WEBADDRESS']+"?service=Live.stopRoom&uid="+socket.uid + "&token=" + socket.token+ "&type=1&stream=" + socket.stream,function(error, response, body){
+                        //     var data_obj={
+                        //                 "retmsg":"ok",
+                        //                 "retcode":"000000",
+                        //                 "msg":[
+                        //                     {
+                        //                         "msgtype":"1",
+                        //                         "_method_":"StartEndLive",
+                        //                         "action":"18",
+                        //                         "ct":"直播关闭"
+                        //                     }
+                        //                 ]
+                        //             };
+                        //     process_msg(io,socket.roomnum,JSON.stringify(data_obj));
+                        //     // console.log('关播');
+                        //     // console.log(FormatNowDate());
+                        //     // console.log('uid---'+socket.uid);
+                        // });
+                        endLiveConnect(io,socket.uid);
+					// }
                     
                     
                     

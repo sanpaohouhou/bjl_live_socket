@@ -192,19 +192,25 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('broadcast',function(data){
-            ////console.log(data);
+            console.log(data);
+            console.log("聊天测试1"+socket.token);
 		    if(socket.token != undefined){
+                console.log("判断socket.token值");
 		    	var dataObj  = typeof data == 'object'?data:evalJson(data);
+                console.log("dataObject +++" + dataObj);
+                console.log(dataObj['msg']);
 			    var msg      = dataObj['msg'][0]; 
 			    var token    = dataObj['token'];
 				var method   = msg['_method_'];
 			    var action   = msg['action'];
 			    var data_str =  typeof data == 'object'?JSON.stringify(data):data;
 			    switch(method){
-			    	case 'SendMsg':{     //聊天                        
+			    	case 'SendMsg':{ 
+                        console.log("聊天测试1");    //聊天                        
 						clientRedis.hget( "super",socket.uid,function(error,res){
 							if(error) return;
 							if(res != null){
+                                console.log("聊天测试2");
 								var data_str2={
                                                 "msg":[
                                                     {
@@ -219,13 +225,16 @@ io.on('connection', function(socket) {
                                             };
 								process_msg(io,socket.roomnum,JSON.stringify(data_str2));
 		    				}else{
+                                console.log("聊天测试3");
 								clientRedis.hget(socket.roomnum + "shutup",socket.uid,function(error,res){
 									if(error) return;
 									if(res != null){
+                                        console.log("聊天测试4");
                                         var newData  = dataObj;
                                         newData['retcode'] = '409002';
                                         socket.emit('broadcastingListen',[JSON.stringify(newData)]);
 									}else{
+                                        console.log("聊天测试5");
 										process_msg(io,socket.roomnum,data_str);
 									}	
 								});

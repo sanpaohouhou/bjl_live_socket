@@ -105,11 +105,12 @@ io.on('connection', function(socket) {
 					var userInfo = evalJson(res);
 					if(res == data.uid ){
 						console.log("[初始化验证成功]--"+data.uid+"---"+data.roomnum+'---'+data.stream);
+                
 						//获取验证token
 						socket.token   = data.token; 
 						socket.roomnum = data.roomnum;
 						socket.stream = data.stream;
-						socket.nicename = userInfo['user_nicename'];
+						socket.nicename = data.username;
 						socket.level = userInfo['level'];
 						socket.avatar = userInfo['avatar'];
 						socket.sign = Number(userInfo['sign']);
@@ -150,7 +151,8 @@ io.on('connection', function(socket) {
                                                     "_method_":"SendMsg",
                                                     "action":"0",
                                                     "ct":{
-                                                        "id":res
+                                                        "id":res,
+                                                        "username":data.username
                                                         // "id":''+userInfo['id'],
                                                         // "user_nicename":''+userInfo['user_nicename'],
                                                         // "avatar":userInfo['avatar'],
@@ -728,9 +730,8 @@ io.on('connection', function(socket) {
                     }	
 					 
 				});
-				clientRedis.get("baccarat:LOGIN_TOKEN:"+socket.token,function(error,res){
                 
-				if(res==socket.uid){
+				if(socket.roomnum==socket.uid){
                     console.log("开始关播"+ socket.reusing);
                     if(socket.reusing==0){
                         console.log("嘿嘿嘿")
@@ -818,7 +819,6 @@ io.on('connection', function(socket) {
 					
 				}
 				////console.log(socket.roomnum+"==="+socket.token+"===="+socket.uid+"======"+socket.stream);
-            });
 				socket.leave(socket.roomnum);
 				delete io.sockets.sockets[socket.id];
 				sockets[socket.uid] = null;

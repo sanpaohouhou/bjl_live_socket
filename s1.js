@@ -70,6 +70,7 @@ io.on('connection', function(socket) {
 	//进入房间
 	socket.on('conn', function(data) {
 		console.log("进入房间");
+        console.log(data);
 		if(!data || !data.token){
 				return !1;
 		}
@@ -95,7 +96,7 @@ io.on('connection', function(socket) {
 		}
 		
 		clientRedis.get("baccarat:LOGIN_TOKEN:"+data.token,function(error,res){
-            console.log("开始获取token");
+            console.log("开始获取token" + res);
 			if(error){
 				return;
 			}else if(res==null){
@@ -246,7 +247,9 @@ io.on('connection', function(socket) {
 			    	}
 			    	case 'SendGift':{    //送礼物
 						var gifToken = dataObj['msg'][0]['ct'];
+                        console.log("giftToken::" + gifToken);
 			    		clientRedis.get(gifToken,function(error,res){
+                            console.log("clientRedis.get(gifToken" + res);
 			    			if(!error&&res != null){
 			    				var resObj = evalJson(res);
 			    				dataObj['msg'][0]['ct'] = resObj;

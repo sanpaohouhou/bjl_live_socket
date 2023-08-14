@@ -113,7 +113,7 @@ io.on('connection', function(socket) {
 						socket.stream = data.stream;
 						socket.nicename = data.username;
 						socket.level = userInfo['level'];
-						socket.avatar = userInfo['avatar'];
+						socket.avatar = data.avatar;
 						socket.sign = Number(userInfo['sign']);
 						socket.usertype   = parseInt(userInfo['usertype']);
 						socket.uid     = data.uid;
@@ -175,9 +175,10 @@ io.on('connection', function(socket) {
                                             "retmsg":"OK"
                                         };
 							process_msg(io,socket.roomnum,JSON.stringify(data_obj));
-							if(socket.stream){
-								// clientRedis.zadd('user_'+socket.stream,socket.sign,userInfo['id']);	
-							}
+							// if(socket.stream){
+                                // console.log("hahahhahahhahah");
+								// clientRedis.zadd('user_'+socket.stream,data.uid,data.uid);	
+							// }
 						}						
 						 
 						sendSystemMsg(socket,"直播内容包含任何低俗、暴露和涉黄内容，账号会被封禁；安全部门会24小时巡查哦～");
@@ -765,26 +766,6 @@ io.on('connection', function(socket) {
                         });
                         endLiveConnect(io,socket.uid);
 					}
-					/* 主播 */ 
-					// if(socket.reusing==0){
-						// request(config['WEBADDRESS']+"?service=Live.stopRoom&uid="+socket.uid + "&token=" + socket.token+ "&type=1&stream=" + socket.stream,function(error, response, body){
-                        //     var data_obj={
-                        //                 "retmsg":"ok",
-                        //                 "retcode":"000000",
-                        //                 "msg":[
-                        //                     {
-                        //                         "msgtype":"1",
-                        //                         "_method_":"StartEndLive",
-                        //                         "action":"18",
-                        //                         "ct":"直播关闭"
-                        //                     }
-                        //                 ]
-                        //             };
-                        //     process_msg(io,socket.roomnum,JSON.stringify(data_obj));
-                        //     // console.log('关播');
-                        //     // console.log(FormatNowDate());
-                        //     // console.log('uid---'+socket.uid);
-                        // });
                         endLiveConnect(io,socket.uid);
 					// }
                     
@@ -792,9 +773,10 @@ io.on('connection', function(socket) {
                     
 				}else{
 					/* 观众 */
-                    clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){
-						if(error) return;
-						if(res){
+                    // clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){
+						// if(error) return;
+						// if(res){
+                            console.log("data.avator" + socket.avatar);
 							var data_obj={
                                             "msg":[
                                                 {
@@ -804,7 +786,7 @@ io.on('connection', function(socket) {
                                                         "id":''+socket.uid,
                                                         "user_nicename":''+socket.nicename,
                                                         "avatar":socket.avatar,
-                                                        "level":''+socket.level
+                                                        // "level":''+socket.level
                                                     },
                                                     "msgtype":"0",
                                                     "uid":''+socket.uid,
@@ -815,9 +797,9 @@ io.on('connection', function(socket) {
                                             "retmsg":"OK"
                                         };
 							process_msg(io,socket.roomnum,JSON.stringify(data_obj));	
-						}
+						// }
 						
-					});
+					// });
                 
 					
 				}

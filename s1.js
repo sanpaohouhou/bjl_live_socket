@@ -175,10 +175,10 @@ io.on('connection', function(socket) {
                                             "retmsg":"OK"
                                         };
 							process_msg(io,socket.roomnum,JSON.stringify(data_obj));
-							// if(socket.stream){
-                                // console.log("hahahhahahhahah");
-								// clientRedis.zadd('user_'+socket.stream,data.uid,data.uid);	
-							// }
+							if(socket.stream){
+                                console.log("hahahhahahhahah");
+								clientRedis.zadd('user_'+socket.stream,data.uid,data.uid);	
+							}
 						}						
 						 
 						sendSystemMsg(socket,"直播内容包含任何低俗、暴露和涉黄内容，账号会被封禁；安全部门会24小时巡查哦～");
@@ -773,9 +773,9 @@ io.on('connection', function(socket) {
                     
 				}else{
 					/* 观众 */
-                    // clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){
-						// if(error) return;
-						// if(res){
+                    clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){
+						if(error) return;
+						if(res){
                             console.log("data.avator" + socket.avatar);
 							var data_obj={
                                             "msg":[
@@ -797,9 +797,9 @@ io.on('connection', function(socket) {
                                             "retmsg":"OK"
                                         };
 							process_msg(io,socket.roomnum,JSON.stringify(data_obj));	
-						// }
+						}
 						
-					// });
+					});
                 
 					
 				}

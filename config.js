@@ -4,7 +4,7 @@ module.exports = {
 	'REDISHOST' : 'production.hej4hw.ng.0001.apne1.cache.amazonaws.com',
 	'REDISPASS' : '',
 	'REDISPORT' : '6379',
-	'REDISDB' 	: 's',
+	'REDISDB' 	: '3',
 	'TOKEN'		: '1234567',
 	'sign_key'	: '76576076c1f5f657b634e966c8836a06',
 	'socket_port': '3000',

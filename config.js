@@ -1,6 +1,7 @@
 module.exports = {
-	'REDISHOST' : 'development.hej4hw.ng.0001.apne1.cache.amazonaws.com',
+	// 'REDISHOST' : 'development.hej4hw.ng.0001.apne1.cache.amazonaws.com',
 	// 'REDISHOST': '127.0.0.1',
+	'REDISHOST' : 'production.hej4hw.ng.0001.apne1.cache.amazonaws.com',
 	'REDISPASS' : '',
 	'REDISPORT' : '6379',
 	'REDISDB' 	: '7',

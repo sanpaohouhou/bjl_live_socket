@@ -698,7 +698,12 @@ io.on('connection', function(socket) {
             if(numscount<0){
 				numscount=0;
 			}   */
-            
+            let options = {
+                url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
+                headers:{
+                    'X-Token':xToken
+                }
+            }
 			if(socket.roomnum ==null || socket.token==null || socket.uid <=0){
                 console.log("资源释放没有数据");
 				return !1;
@@ -738,12 +743,12 @@ io.on('connection', function(socket) {
 				if(socket.roomnum==socket.uid){
                     console.log("开始关播"+ socket.reusing);
                     if(socket.reusing==0){
-                        let options = {
-                            url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
-                            headers:{
-                                'X-Token':xToken
-                            }
-                        }
+                        // let options = {
+                        //     url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
+                        //     headers:{
+                        //         'X-Token':xToken
+                        //     }
+                        // }
                         console.log(options);
 						request.post(options,function(error, response, body){
                             var data_obj={
@@ -763,7 +768,7 @@ io.on('connection', function(socket) {
                             console.log(FormatNowDate());
                             console.log('uid---'+socket.uid);
                         });
-                        endLiveConnect(io,socket.uid);
+                        // endLiveConnect(io,socket.uid);
 					}
                     
 				}else{

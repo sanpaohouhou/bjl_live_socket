@@ -74,7 +74,7 @@ io.on('connection', function(socket) {
 		if(!data || !data.token){
 				return !1;
 		}
-		xToken = data.token
+		
 		userid=data.uid;
 		old_socket = sockets[userid];
 		if (old_socket && old_socket != socket) {
@@ -104,9 +104,11 @@ io.on('connection', function(socket) {
 			}else{
 				if(res != null){
 					var userInfo = evalJson(res);
+                    if(data.roomnum == res){
+                        xToken = data.token
+                    }
 					if(res == data.uid ){
 						console.log("[初始化验证成功]--"+data.uid+"---"+data.roomnum+'---'+data.stream);
-                
 						//获取验证token
 						socket.token   = data.token; 
 						socket.roomnum = data.roomnum;

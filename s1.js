@@ -738,7 +738,6 @@ io.on('connection', function(socket) {
 				if(socket.roomnum==socket.uid){
                     console.log("开始关播"+ socket.reusing);
                     if(socket.reusing==0){
-                        console.log("嘿嘿嘿")
                         let options = {
                             url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
                             headers:{
@@ -766,11 +765,7 @@ io.on('connection', function(socket) {
                         });
                         endLiveConnect(io,socket.uid);
 					}
-                        endLiveConnect(io,socket.uid);
-					// }
-                    
-                    
-                    
+                       
 				}else{
 					/* 观众 */
                     clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){

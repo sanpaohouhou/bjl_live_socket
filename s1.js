@@ -772,6 +772,12 @@ io.on('connection', function(socket) {
 					}
                     
 				}else{
+                    let options = {
+                        url:config['WEBADDRESS']+"/live/closeLive?liveId="+socket.liveId,
+                        headers:{
+                            'X-Token':xToken
+                        }
+                    }
 					/* 观众 */
                     clientRedis.zrem('user_'+socket.stream,socket.uid,function(error,res){
 						if(error) return;

@@ -1,0 +1,22 @@
+name: live构建镜像
+
+on:
+  push:
+    branches: [ live ]
+  pull_request:
+    branches: [ live ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: kciter/aws-ecr-action@master
+        with:
+          access_key_id: AKIAXO26WTLFLOYNMXFB
+          secret_access_key: "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"
+          account_id: "512910334666"
+          repo: bjl_live_socket
+          region: ap-northeast-1
+          tags: live
+          create_repo: true
